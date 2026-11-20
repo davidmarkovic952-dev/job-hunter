@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Hunter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><span class="logo">◎</span> Job Hunter</div>
+  <nav>
+    <button data-tab="jobs" class="active">🔎 Oglasi <span class="pill" id="cnt-novo"></span></button>
+    <button data-tab="newcv">✨ CV za oglas</button>
+    <button data-tab="cvs">📄 Moji CV-ovi</button>
+    <button data-tab="applied">📬 Prijave</button>
+    <button data-tab="profile">👤 Moj profil</button>
+    <button data-tab="settings">⚙️ Podešavanja</button>
+  </nav>
+  <div class="ai-status" id="ai-status"></div>
+</aside>
+
+<main>
+  <!-- ================= OGLASI ================= -->
+  <section id="tab-jobs" class="tab active">
+    <div class="head">
+      <h1>Oglasi</h1>
+      <button class="primary" id="btn-hunt">Skupi nove oglase</button>
+    </div>
+    <div class="hunt-box hidden" id="hunt-box">
+      <div class="hunt-top"><span class="spinner" id="hunt-spin"></span><b id="hunt-stage">Skupljam…</b><span id="hunt-counts" class="muted"></span><button class="ghost small" id="hunt-hide">Sakrij</button></div>
+      <pre id="hunt-log"></pre>
+    </div>
+    <div class="filters">
+      <input id="f-q" placeholder="Pretraga (naziv, firma, grad)…">
+      <select id="f-status">
+        <option value="">Svi statusi</option><option value="novo">Novo</option><option value="sačuvano">Sačuvano</option>
+        <option value="poslato">Poslato</option><option value="razgovor">Razgovor</option><option value="odbačeno">Odbačeno</option>
+      </select>
+      <select id="f-source"><option value="">Svi izvori</option></select>
+      <label class="inline">Min. ocena <input type="range" id="f-min" min="0" max="90" step="5" value="40"><span id="f-min-v">40</span></label>
+      <label class="inline"><input type="checkbox" id="f-remote"> Samo remote</label>
+      <select id="f-sort"><option value="score">Najbolji prvo</option><option value="date">Najnoviji prvo</option></select>
+    </div>
+    <div id="jobs-list" class="list"></div>
+  </section>
+
+  <!-- ================= NOVI CV ================= -->
+  <section id="tab-newcv" class="tab">
+    <div class="head"><h1>CV prilagođen oglasu</h1></div>
+    <div class="card">
+      <label>Link oglasa</label>
+      <input id="cv-url" placeholder="https://… (MojeDelo, Študentski servis, Infostud, LinkedIn, bilo koji sajt)">
+      <details id="cv-paste-wrap"><summary>…ili nalepi tekst oglasa (ako sajt traži prijavu)</summary>
+        <div class="grid2"><input id="cv-title" placeholder="Naziv pozicije"><input id="cv-company" placeholder="Firma"></div>
+        <textarea id="cv-text" rows="8" placeholder="Nalepi ceo tekst oglasa ovde"></textarea>
+      </details>
+      <div class="row-actions">
+        <label class="inline">Jezik CV-a
+          <select id="cv-lang"><option value="auto">Kao oglas (auto)</option><option value="sl">Slovenački</option><option value="sr">Srpski</option><option value="en">Engleski</option><option value="de">Nemački</option></select>
+        </label>
+        <button class="primary" id="btn-make-cv">Napravi CV</button>
+      </div>
+    </div>
+    <div id="cv-result"></div>
+  </section>
+
+  <!-- ================= CV LISTA ================= -->
+  <section id="tab-cvs" class="tab">
+    <div class="head"><h1>Moji CV-ovi</h1></div>
+    <div id="cvs-list" class="list"></div>
+  </section>
+
+  <!-- ================= PRIJAVE ================= -->
+  <section id="tab-applied" class="tab">
+    <div class="head"><h1>Prijave</h1></div>
+    <p class="muted">Oglasi označeni kao „Poslato" ili „Razgovor". Upiši beleške (kome si pisao, kad da se javiš ponovo).</p>
+    <div id="applied-list" class="list"></div>
+  </section>
+
+  <!-- ================= PROFIL ================= -->
+  <section id="tab-profile" class="tab">
+    <div class="head"><h1>Moj profil</h1><button class="primary" id="btn-save-profile">Sačuvaj profil</button></div>
+    <div class="card import">
+      <div>
+        <b>Uvezi postojeći CV</b>
+        <p class="muted">PDF ili DOCX — AI ga pretvori u profil, a ti posle samo doteraš. Ovo je osnova iz koje se pravi svaki prilagođeni CV, pa unesi SVE što si radio.</p>
+      </div>
+      <input type="file" id="cv-import" accept=".pdf,.docx,.txt,.md">
+      <button id="btn-import">Uvezi</button>
+    </div>
+    <div id="profile-form"></div>
+  </section>
+
+  <!-- ================= PODEŠAVANJA ================= -->
+  <section id="tab-settings" class="tab">
+    <div class="head"><h1>Podešavanja</h1><button class="primary" id="btn-save-settings">Sačuvaj</button></div>
+    <div class="card">
+      <h3>AI (besplatno)</h3>
+      <p class="muted">Preporuka: <b>Google Gemini</b> — besplatan ključ za 1 minut na <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>.
+        Rezerva: <b>Groq</b> (<a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>, besplatno) ili <b>Ollama</b> lokalno na Macu (bez interneta, sporije).</p>
+      <div class="grid2">
+        <div><label>Gemini API ključ</label><div class="with-btn"><input id="s-geminiKey" placeholder="AIza…"><button data-test="gemini">Test</button></div></div>
+        <div><label>Gemini model</label><input id="s-geminiModel"></div>
+        <div><label>Groq API ključ</label><div class="with-btn"><input id="s-groqKey" placeholder="gsk_…"><button data-test="groq">Test</button></div></div>
+        <div><label>Groq model</label><input id="s-groqModel"></div>
+        <div><label>Ollama adresa</label><div class="with-btn"><input id="s-ollamaUrl"><button data-test="ollama">Test</button></div></div>
+        <div><label>Ollama model</label><input id="s-ollamaModel"></div>
+        <div><label>Claude API ključ (opciono, plaća se)</label><div class="with-btn"><input id="s-anthropicKey" placeholder="sk-ant-…"><button data-test="anthropic">Test</button></div></div>
+        <div><label>Redosled (zarezom)</label><input id="s-order"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Šta tražim</h3>
+      <div class="grid2">
+        <div><label>Ključne reči (zarezom) — po ovome se pretražuje</label><textarea id="s-keywords" rows="3"></textarea></div>
+        <div><label>Lokacije (zarezom) — za LinkedIn; „Remote" = rad od kuće</label><textarea id="s-locations" rows="3"></textarea></div>
+        <div><label>Izbaci oglase čiji naslov sadrži</label><textarea id="s-exclude" rows="2"></textarea></div>
+        <div><label>Oglas MORA da sadrži bar jedno od (prazno = svejedno)</label><textarea id="s-mustHaveAny" rows="2"></textarea></div>
+      </div>
+      <div class="grid4">
+        <label class="inline"><input type="checkbox" id="s-remoteOnly"> Samo remote</label>
+        <div><label>Najstariji oglas (dana)</label><input type="number" id="s-maxAgeDays"></div>
+        <div><label>Max po izvoru</label><input type="number" id="s-maxPerSource"></div>
+        <div><label>AI ocena za top N novih</label><input type="number" id="s-aiScoreTop"></div>
+      </div>
+      <label>Izvori</label>
+      <div id="s-sources" class="checks"></div>
+    </div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden"><div class="modal-body"><button class="close" id="modal-close">×</button><div id="modal-content"></div></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>

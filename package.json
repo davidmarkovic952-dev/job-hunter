@@ -1,0 +1,20 @@
+{
+  "name": "job-hunter",
+  "version": "1.0.0",
+  "description": "Lokalni alat: skupljanje i filtriranje oglasa + AI prilagođen CV u PDF",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/run.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "express": "^4.21.2",
+    "mammoth": "^1.8.0",
+    "multer": "^2.0.2",
+    "pdf-parse": "^1.1.1",
+    "puppeteer": "^24.20.0"
+  }
+}
